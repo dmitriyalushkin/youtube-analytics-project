@@ -1,8 +1,8 @@
-from src.channel import Channel
+from src.channel import Channel, printj
 
 if __name__ == '__main__':
     moscowpython = Channel('UC-OVMPlMA3-YCIeg4z5z23A')
-    moscowpython.print_info()
+    moscowpython.print_info(printj)
 
     """
 {

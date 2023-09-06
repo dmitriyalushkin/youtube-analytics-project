@@ -1,5 +1,6 @@
 from helper.youtube_api_manual import printj
 
+
 class Channel:
     """Класс для ютуб-канала"""
 
