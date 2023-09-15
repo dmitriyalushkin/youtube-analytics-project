@@ -13,7 +13,7 @@ class Channel:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
 
-        response = self.get_service().channels().list(id=self.__channel_id, part='snippet,statistics').execute()
+        response = self.__get_service().channels().list(id=self.__channel_id, part='snippet,statistics').execute()
 
         self.title = response['items'][0]['snippet']['title']
         self.description = response['items'][0]['snippet']['description']
@@ -23,13 +23,49 @@ class Channel:
         self.view_count = response['items'][0]['statistics']['viewCount']
 
 
+    def __str__(self):
+        return f'{self.title}({self.url})'
+
+
+    def __add__(self, other):
+        return self.subscriber_count + other.subscriber_count
+
+
+    def __sub__(self, other):
+        return int(self.subscriber_count) - int(other.subscriber_count)
+
+
+    def __sub__(self, other):
+        return int(other.subscriber_count) - int(self.subscriber_count)
+
+
+    def __gt__(self, other):
+        return self.subscriber_count > other.subscriber_count
+
+
+    def __ge__(self, other):
+        return self.subscriber_count >= other.subscriber_count
+
+
+    def __lt__(self, other):
+        return self.subscriber_count < other.subscriber_count
+
+
+    def __le__(self, other):
+        return self.subscriber_count <= other.subscriber_count
+
+
+    def __eq__(self, other):
+        return self.subscriber_count == other.subscriber_count
+
+
     @property
     def channel_id(self):
         return self.__channel_id
 
 
     @classmethod
-    def get_service(cls):
+    def __get_service(cls):
         return build('youtube', 'v3', developerKey=cls.api_key)
 
 
