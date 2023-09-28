@@ -2,23 +2,31 @@ import datetime
 
 import isodate
 
-from src.channel import Channel
+from googleapiclient.discovery import build
 
+import os
 
 
 class PlayList:
+    api_key = os.getenv('API_KEY')
 
     def __init__(self, playlist_id):
         self.playlist_id = playlist_id
         self.title = self.get_playlist_title()
         self.url = "https://www.youtube.com/playlist?list=" + playlist_id
 
+
+    @classmethod
+    def get_service(cls):
+        return build('youtube', 'v3', developerKey=cls.api_key)
+
+
     def get_playlist_title(self):
         """
         Функция получения названия плейлиста
         """
         channel_id = self.get_playlist_data()["items"][0]["snippet"]["channelId"]
-        channel_playlists_data = Channel.get_service().playlists().list(channelId=channel_id,
+        channel_playlists_data = self.get_service().playlists().list(channelId=channel_id,
                                                                         part='contentDetails,snippet',
                                                                         maxResults=50,
                                                                         ).execute()
@@ -31,7 +39,7 @@ class PlayList:
         """
         Метод получения данных плейлиста
         """
-        youtube = Channel.get_service()
+        youtube = self.get_service()
         playlist_data = youtube.playlistItems().list(playlistId=self.playlist_id,
                                                      part='contentDetails, id, snippet, status',
                                                      maxResults=50,
@@ -58,7 +66,7 @@ class PlayList:
 
         """
         video_ids = self.get_video_ids()
-        youtube = Channel.get_service()
+        youtube = self.get_service()
         videos_in_playlist = youtube.videos().list(part='contentDetails,statistics',
                                                    id=','.join(video_ids)
                                                    ).execute()
@@ -100,7 +108,9 @@ class PlayList:
 
         return f"https://youtu.be/{most_liked_video_id}"
 
-
+# pl = PlayList('PLv_zOGKKxVpj-n2qLkEM2Hj96LO6uqgQw')
+# duration = pl.total_duration
+# print(pl.show_best_video())
 
 
 
